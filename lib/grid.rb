@@ -10,9 +10,11 @@ class Grid
     @rows = []
     @cells.each_slice(9){|n| @rows << n}
     @columns = []
-    @cells.each_slice(9) {|n| @columns << n}.transpose
+    @cells.each_slice(9) {|n| @columns << n}
+    @columns = @columns.transpose
     @boxes = []
     assign_neighbours
+    puts "done"
   end
 
   def solved?
@@ -22,10 +24,14 @@ class Grid
   def assign_neighbours
     @cells.each do |cell|
       row_neighbours = get_row_neighbours_for cell
+      p row_neighbours.count
       col_neighbours = get_column_neighbours_for cell
       get_box_id_for cell
-      box_neighbours = get_box_neighbours
+      box_neighbours = get_box_neighbours cell
       cell.neighbours = (row_neighbours + col_neighbours + box_neighbours)
+      # cell.neighbours = row_neighbours
+      # # cell.neighbours = col_neighbours
+      # # cell.neighbours = box_neighbours
     end
   end
 

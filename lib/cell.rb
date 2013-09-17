@@ -12,6 +12,10 @@ class Cell
     ALLOWED_VALUES.include?(@value)
   end
 
+  def inspect
+    "Cell: #{value}"
+  end
+
   def identify_candidates
     ALLOWED_VALUES - @neighbours.uniq
   end
