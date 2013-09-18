@@ -7,14 +7,22 @@ class Grid
 
   def initialize(puzzle)
     @cells = puzzle.chars.map { |c| Cell.new(c.to_i) }
+    create_puzzle_rows
+    create_puzzle_columns
+    @boxes = []
+    assign_neighbours
+  end
+
+  def create_puzzle_rows
     @rows = []
     @cells.each_slice(9){|n| @rows << n}
+    @rows
+  end
+
+  def create_puzzle_columns
     @columns = []
     @cells.each_slice(9) {|n| @columns << n}
     @columns = @columns.transpose
-    @boxes = []
-    assign_neighbours
-    puts "done"
   end
 
   def solved?
@@ -24,23 +32,21 @@ class Grid
   def assign_neighbours
     @cells.each do |cell|
       row_neighbours = get_row_neighbours_for cell
-      p row_neighbours.count
       col_neighbours = get_column_neighbours_for cell
       get_box_id_for cell
       box_neighbours = get_box_neighbours cell
-      cell.neighbours = (row_neighbours + col_neighbours + box_neighbours)
-      # cell.neighbours = row_neighbours
-      # # cell.neighbours = col_neighbours
-      # # cell.neighbours = box_neighbours
+      # cell.neighbours = (row_neighbours + col_neighbours + box_neighbours)
     end
   end
 
   def get_row_neighbours_for cell
-    @rows.select {|row| row.include? cell}.flatten  
+    row_neighbours = @rows.select {|row| row.include? cell}.flatten
+    row_neighbours.reject{|c| c == cell}
   end
 
   def get_column_neighbours_for cell
-    @columns.select {|col| col.include? cell}.flatten
+    col_neighbours = @columns.select {|col| col.include? cell}.flatten
+    col_neighbours.delete_if{|c| c == cell}
   end
 
   def get_box_neighbours cell
@@ -58,9 +64,14 @@ class Grid
     outstanding_before = @cells.size 
     looping = false
     while !solved? && !looping
-        @cells.each {|cell| cell.fill_in!}
-        outstanding = @cells.count {|c| !c.filled_in?}
-        looping = outstanding_before == outstanding
+      @cells.each {|cell| cell.fill_in!}
+      outstanding = @cells.count {|c| !c.filled_in?}
+      looping = outstanding_before == outstanding
+      puts "looping equals #{looping} \n outstanding_before = #{outstanding_before} \n and outstanding = #{outstanding}"
     end
   end
+
+  # def inspect
+  #   @cells.each {|cell| puts cell.value}
+  # end
 end

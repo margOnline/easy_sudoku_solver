@@ -6,6 +6,7 @@ describe Grid do
   let(:grid) {Grid.new(puzzle)}
   let(:cells) {(1..81).to_a}
 
+
   context 'initialization' do
 
     it 'has 81 cells' do
@@ -33,25 +34,19 @@ describe Grid do
     end
   end
 
-  context 'recognises neighbours by' do
+  context 'has 8 neighbours in' do
     it 'row' do
-      expect(grid.get_row_neighbours_for(cells[34])).to eq 3
+      row_neighbours = grid.get_row_neighbours_for(grid.cells[56])
+      expect(row_neighbours.size).to eql 8
     end
 
     it 'column' do
-      cell_index = 34
-      expect(grid.get_column_neighbours_for(cell_index)).to be_false
-    end
-
-    it 'column' do
-      cell_index = 45
-      expect(grid.get_column_neighbours_for(cell_index)).to be_true
+      col_neighbours = grid.get_column_neighbours_for(grid.cells[75])
+      expect(col_neighbours.size).to eql 8
     end
 
     it 'box' do
-      row = 4
-      column = 7
-      expect(grid.get_box_neighbours(row, column)).to eq 6
+      expect(grid.get_box_neighbours(grid.cells[45])).to eq 6
     end
 
   end
