@@ -13,16 +13,18 @@ class Cell
   end
 
   def inspect
-    "Cell: #{value}"
+    "\#<Cell box_id:#{box_id} value:#{value} neighbours:#{'nothing here'}"
   end
 
   def identify_candidates
-    ALLOWED_VALUES - @neighbours.uniq
+    neighbour_values = @neighbours.map{|cell| cell.value}.uniq
+    ALLOWED_VALUES - neighbour_values
   end
 
   def fill_in!
     return if (1..9).include?(@value)
     candidates = identify_candidates
+    candidates
     @value = candidates.size == 1 ? candidates[0] : 0
   end
 
