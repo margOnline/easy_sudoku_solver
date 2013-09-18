@@ -20,21 +20,14 @@ describe Grid do
     it 'has a solved second cell with value 1' do
       expect(grid.cells[1].value).to eq 1
     end
-    
-    it 'knows if it is not solved' do
-      expect(grid.solved?).to be_false
-    end
   end
 
-  context 'knows if it is' do
-    let(:puzzle) {'615493872348127956279568431496832517521746389783915264952681743864379125137254698'}
-    let(:grid) {Grid.new(puzzle)}
-    it 'solved' do
-      expect(grid.solved?).to be_true
-    end
+  it 'assigns box_ids to each cell' do
+    box_id = grid.get_box_id_for(grid.cells[56])
+    expect(box_id).to eql 7
   end
 
-  context 'has 8 neighbours in' do
+  context 'assigns to each cell 8 neighbours by' do
     it 'row' do
       row_neighbours = grid.get_row_neighbours_for(grid.cells[56])
       expect(row_neighbours.size).to eql 8
@@ -42,21 +35,35 @@ describe Grid do
 
     it 'column' do
       col_neighbours = grid.get_column_neighbours_for(grid.cells[75])
+       # puts col_neighbours.inspect
       expect(col_neighbours.size).to eql 8
     end
 
     it 'box' do
-      expect(grid.get_box_neighbours(grid.cells[45])).to eq 6
+      box_neighbours = grid.get_box_neighbours(grid.cells[75])
+      # puts box_neighbours.inspect
+      expect(box_neighbours.size).to eql 8
     end
 
   end
 
-  xit 'can solve the puzzle' do
-    expect(grid.solved?).to be_false
-    grid.solved?
-    expect(grid.solved?).to be_true
-    expect(grid.to_s).to eq ('615493872348127956279568431496832517521746389783915264952681743864379125137254698')
+  it 'assigns 24 neighbours to each cell' do
+    expect(grid.cells[74].neighbours.size).to eql 24
+    expect(grid.cells[23].neighbours.size).to eql 24
   end
 
+  context 'knows if it is' do
+
+    it "not solved" do
+      expect(grid.solved?).to be_false
+    end
+
+    it "solved" do
+      grid.solve
+      expect(grid.solved?).to be_true
+      expect(grid.to_s).to eq('615493872348127956279568431496832517521746389783915264952681743864379125137254698')
+    end
+    
+  end
  
 end

@@ -30,18 +30,20 @@ class Grid
   end
 
   def assign_neighbours
-    @cells.each do |cell|
+    @cells.map! do |cell|
       row_neighbours = get_row_neighbours_for cell
       col_neighbours = get_column_neighbours_for cell
       get_box_id_for cell
       box_neighbours = get_box_neighbours cell
-      # cell.neighbours = (row_neighbours + col_neighbours + box_neighbours)
+      cell.neighbours = (row_neighbours + col_neighbours + box_neighbours)
+      cell
     end
   end
 
   def get_row_neighbours_for cell
     row_neighbours = @rows.select {|row| row.include? cell}.flatten
-    row_neighbours.reject{|c| c == cell}
+    row_neighbours.delete_if{|c| c == cell}
+    row_neighbours
   end
 
   def get_column_neighbours_for cell
@@ -50,28 +52,32 @@ class Grid
   end
 
   def get_box_neighbours cell
-    @cells.select {|comparing_cell| comparing_cell.box_id == cell.box_id}
+    box_neighbours = @cells.select {|c| c.box_id == cell.box_id}
+    box_neighbours.delete_if{|c| c == cell}
   end
 
   def get_box_id_for cell
     row = @rows.index(@rows.detect {|row| row.include?(cell)})
     column = @columns.index(@columns.detect{|col| col.include?(cell)})
-    BOX_ID[row * 9  + column]
+    cell.box_id = BOX_ID[row * 9  + column]
   end
 
+  def solved?
+    @cells.count {|c| c.filled_in?} == 81
+  end
 
   def solve
-    outstanding_before = @cells.size 
+    outstanding_before = @cells.size - @cells.count {|c| c.filled_in?}
+
     looping = false
     while !solved? && !looping
       @cells.each {|cell| cell.fill_in!}
       outstanding = @cells.count {|c| !c.filled_in?}
       looping = outstanding_before == outstanding
-      puts "looping equals #{looping} \n outstanding_before = #{outstanding_before} \n and outstanding = #{outstanding}"
     end
   end
 
-  # def inspect
-  #   @cells.each {|cell| puts cell.value}
-  # end
+  def to_s
+    @cells.map {|cell| cell.value}.join('')
+  end
 end
